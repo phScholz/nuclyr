@@ -9,7 +9,7 @@ def entryXpath(sect, tt):
     if tt != 1:
         return '//*[contains(@id, "sect'+str(sect)+'x")]/tt['+str(tt)+']/a[@class="e4link" and @title="Interpreted EXFOR: X4-iTree..."]'
 
-def getEXFOR_SIG(Target, Reaction, output="./data/", web_driver="Edge", driver_loc="./edgedriver_win64_83.0.478.37/msedgedriver.exe", verbosity=0):
+def getSIG(Target, Reaction, output="./data/", web_driver="Edge", driver_loc="./edgedriver_win64_83.0.478.37/msedgedriver.exe", verbosity=0):
     print(type(Target))
     print(type(Reaction))
     print(Target)

@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(name='nuclyr',
-      version='0.01',
+      version='0.11',
       author='Philipp Scholz',
       author_email='pscholz@outlook.com',
       license='MIT',
