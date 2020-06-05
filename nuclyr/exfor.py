@@ -10,18 +10,27 @@ def entryXpath(sect, tt):
         return '//*[contains(@id, "sect'+str(sect)+'x")]/tt['+str(tt)+']/a[@class="e4link" and @title="Interpreted EXFOR: X4-iTree..."]'
 
 def getSIG(Target, Reaction, output="./data/", web_driver="Edge", driver_loc="./edgedriver_win64_83.0.478.37/msedgedriver.exe", verbosity=0):
-    print(type(Target))
-    print(type(Reaction))
-    print(Target)
-    print(Reaction)
+    TargetList=[]
+    ReactionList=[]
+    
+    if type(Target) is not list:
+        TargetList.append(Target)
+    else:
+        TargetList=Target
+    
+    if type(Reaction) is not list:
+        ReactionList.append(Reaction)
+    else:
+        ReactionList=Reaction
+
     t0 = time.time()
-    num = len(Target)*len(Reaction)
-    print("Number of reactions: ", num)
+    num = len(TargetList)*len(ReactionList)
+    print("Total number of reactions: ", num)
     i = 1
     done = False
 
-    for target in Target:
-        for reaction in Reaction:
+    for target in TargetList:
+        for reaction in ReactionList:
             done = False
             print()
             print("Target: ", target)
