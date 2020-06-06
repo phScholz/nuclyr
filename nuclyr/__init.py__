@@ -1,1 +1,1 @@
-from .exfor import getEXFOR_SIG
+import .config
