@@ -1,7 +1,11 @@
 from selenium import webdriver
 import pandas as pd
 from os import path
+import os
 import time
+import json
+import sys
+import nuclyr.config as cf
 
 def entryXpath(sect, tt):
     if tt == 0:
@@ -9,9 +13,24 @@ def entryXpath(sect, tt):
     if tt != 1:
         return '//*[contains(@id, "sect'+str(sect)+'x")]/tt['+str(tt)+']/a[@class="e4link" and @title="Interpreted EXFOR: X4-iTree..."]'
 
-def getSIG(Target, Reaction, output="./data/", web_driver="Edge", driver_loc="./edgedriver_win64_83.0.478.37/msedgedriver.exe", verbosity=0):
+def checkOutputDir(outputDir):
+    if path.exists(outputDir):
+        return True
+    else:
+        try:
+            os.mkdir(outputDir)
+        except Exception as e:
+            print(e)
+            return False
+
+def getSIG(Target, Reaction, output=cf.Get("output"), outputDir=cf.Get("outputDir"), web_driver=cf.Get("webdriver"), driver_loc=cf.Get("driver_loc"), verbosity=0):
+    if output:
+        checkOutputDir(outputDir)
+    
     TargetList=[]
     ReactionList=[]
+    Data=[]
+    Legends=[]
     
     if type(Target) is not list:
         TargetList.append(Target)
@@ -25,7 +44,7 @@ def getSIG(Target, Reaction, output="./data/", web_driver="Edge", driver_loc="./
 
     t0 = time.time()
     num = len(TargetList)*len(ReactionList)
-    print("Total number of reactions: ", num)
+    print("[nuclyr|exfor] Total number of reactions: ", num)
     i = 1
     done = False
 
@@ -33,36 +52,46 @@ def getSIG(Target, Reaction, output="./data/", web_driver="Edge", driver_loc="./
         for reaction in ReactionList:
             done = False
             print()
-            print("Target: ", target)
-            print("Reaction: ", reaction)
+            print("[nuclyr|exfor] Target: ", target)
+            print("[nuclyr|exfor] Reaction: ", reaction)
             
             
             print()
             t = time.time() - t0
             avgtime = t / i
-            print("Elapsed time    : ", t, " s")
-            print("Avg time        : ", avgtime, " s")
+            print("[nuclyr|exfor] Elapsed time    : ", t, " s")
+            print("[nuclyr|exfor] Avg time        : ", avgtime, " s")
             timeLeft=avgtime*num-t
             if timeLeft >= 0:
-                print("Approx time left: ", timeLeft, " s")
+                print("[nuclyr|exfor] Approx time left: ", timeLeft, " s")
             else:
-                print("Approx time left: ", 0, " s")
+                print("[nuclyr|exfor] Approx time left: ", 0, " s")
             print()
             i+=1
 
-            if path.exists(output+target+"("+reaction+")_000.csv"):
+            if path.exists(outputDir+target+"("+reaction+")_000.csv"):
                 print()
-                print("File already exists!!!")
+                print("[nuclyr|exfor] File already exists!!!")
                 done = True
                 continue
+                
+            driver_loc = cf.Get("driver_loc")
 
             while done is False:
                             
                 if web_driver=="Edge":
+                    print("[nuclyr|exfor] Using 'Edge' as webdriver...")
+                    print("[nuclyr|exfor] Webdriver location: ", driver_loc)
                     driver = webdriver.Edge(driver_loc)
+                
+                if web_driver=="Chrome":
+                    print("[nuclyr|exfor] Using 'Chrome' as webdriver...")
+                    print("[nuclyr|exfor] Webdriver location: ", driver_loc)
+                    driver = webdriver.Chrome(driver_loc)
 
                 try:
                     driver.get("https://www-nds.iaea.org/exfor/exfor.htm")
+
                 except Exception as e:
                     if verbosity:
                         print(e)
@@ -91,7 +120,7 @@ def getSIG(Target, Reaction, output="./data/", web_driver="Edge", driver_loc="./
 
                 if num_sect == 0:
                     print()
-                    print("No data available!")
+                    print("[nuclyr|exfor] No data available!")
                     driver.quit()
                     done = True
                     continue
@@ -122,19 +151,19 @@ def getSIG(Target, Reaction, output="./data/", web_driver="Edge", driver_loc="./
                             #finding header
                             header = driver.find_element_by_xpath('html/body/div[4]/ul/li/ul/li/div[2]/span').text
                             print()
-                            print("Header: ", header)
+                            print("[nuclyr|exfor] Header: ", header)
                             df["Header"] = header
 
                             #define reaction
                             x = reaction.upper()
-                            print("Reaction: ", x)
+                            print("[nuclyr|exfor] Reaction: ", x)
                             df["Reaction"] = x
 
                             #getting data string
 
                             try:
                                 data = driver.find_element_by_xpath('//span[contains(text(), "'+x+'")]').text
-                                print("Data: ", data)
+                                print("[nuclyr|exfor] Data: ", data)
                                 df["Data"] = data
 
                                 good=True
@@ -160,9 +189,12 @@ def getSIG(Target, Reaction, output="./data/", web_driver="Edge", driver_loc="./
 
                             #print(df)
                             #print(legend)
-                            filename="./data/"+target+"("+reaction+")_"+str(j).zfill(3)+".csv"
-                            df.to_csv(filename)
+                            if output:
+                                filename=outputDir+target+"("+reaction+")_"+str(j).zfill(3)+".csv"
+                                df.to_csv(filename)
                             i+=1
+                            Data.append(df)
+                            Legends.append(legend)
                             time.sleep(.1)
                             driver.back()
                             time.sleep(.1)
@@ -172,7 +204,8 @@ def getSIG(Target, Reaction, output="./data/", web_driver="Edge", driver_loc="./
                                 print(e)
                             continue
                         
-                print(target+"("+reaction+") Done!!!")
+                print("[nuclyr|exfor] "target+"("+reaction+") Done!!!")
                 driver.quit()
                 done = True
                 continue
+    return Data, Legends
