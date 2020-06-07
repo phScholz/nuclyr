@@ -23,6 +23,32 @@ def checkOutputDir(outputDir):
             print(e)
             return False
 
+def checkHeader(df):
+    header_list = list(df)
+
+    en_gev = False
+    en_mev = False
+    en_kev = False
+    data_b = False
+    data_mb = False
+
+    if ("EN", "GEV") in header_list:
+        en_gev = True
+
+    if ("EN", "MEV") in header_list:
+        en_mev = True
+    
+    if ("EN", "KEV") in header_list:
+        en_kev = True
+
+    if ("DATA", "B") in header_list:
+        data_b = True
+
+    if ("DATA", "MB") in header_list:
+        data_mb = True
+
+    return en_gev, en_mev, en_kev, data_mb, data_b
+
 def getSIG(Target, Reaction, output=cf.Get("output"), outputDir=cf.Get("outputDir"), web_driver=cf.Get("webdriver"), driver_loc=cf.Get("driver_loc"), verbosity=0):
     if output:
         checkOutputDir(outputDir)
@@ -146,25 +172,51 @@ def getSIG(Target, Reaction, output=cf.Get("output"), outputDir=cf.Get("outputDi
                             df = tables[-1]
                             legend = tables[-2]
 
-                            df["link"]=driver.current_url
+                            # checking if the data is in a proper form
+                            en_gev, en_mev, en_kev, data_mb, data_b = checkHeader(df)
+
+                            if en_gev and not en_mev:
+                                df[("EN","MEV")] = df[("EN","GEV")]*1e3
+                                en_mev = True
+                            
+                            if en_kev and not en_mev:
+                                df[("EN","MEV")] = df[("EN","KEV")]/1e3
+                                en_mev = True
+
+                            if en_mev and not en_kev:
+                                df[("EN","KEV")] = df[("EN","MEV")]*1e3
+                                en_kev = True
+                            
+                            if data_b and not data_mb:
+                                df[("DATA","MB")] = df[("DATA","B")]*1e3
+                                data_mb = True
+                            
+                            if data_mb and not data_b:
+                                df[("DATA","B")] = df[("DATA","MB")]/1e3
+                                data_b = True
+
+                            if verbosity:
+                                print(df.head())
+
+                            df[("Link","")]=driver.current_url
+                            df[("Target","")] = target
 
                             #finding header
                             header = driver.find_element_by_xpath('html/body/div[4]/ul/li/ul/li/div[2]/span').text
                             print()
                             print("[nuclyr|exfor] Header: ", header)
-                            df["Header"] = header
+                            df[("Header","")] = header
 
                             #define reaction
                             x = reaction.upper()
                             print("[nuclyr|exfor] Reaction: ", x)
-                            df["Reaction"] = x
+                            df[("Reaction","")] = x
 
                             #getting data string
-
                             try:
                                 data = driver.find_element_by_xpath('//span[contains(text(), "'+x+'")]').text
-                                print("[nuclyr|exfor] Data: ", data)
-                                df["Data"] = data
+                                df[("Quantity","")] = data
+                                print("[nuclyr|exfor] Quantity: ", data)
 
                                 good=True
 
@@ -185,16 +237,21 @@ def getSIG(Target, Reaction, output=cf.Get("output"), outputDir=cf.Get("outputDi
                                 
                             except Exception as e:
                                 if verbosity:
+                                    print("[nuclyr|exfor] Quantity scraping didn't work.")
                                     print(e)
 
-                            #print(df)
-                            #print(legend)
                             if output:
                                 filename=outputDir+target+"("+reaction+")_"+str(j).zfill(3)+".csv"
                                 df.to_csv(filename)
+
                             i+=1
-                            Data.append(df)
-                            Legends.append(legend)
+
+                            if en_mev and en_kev and data_mb and data_b:
+                                Data.append(df[[("EN","MEV"),("EN","KEV"),("DATA","B"),("DATA","MB"),("Target",""),("Reaction",""),("Quantity",""),("Header",""),("Link","")]])
+                                Legends.append(legend)
+                            else:
+                                print("[nuclyr|exfor] Data was not added.")
+
                             time.sleep(.1)
                             driver.back()
                             time.sleep(.1)
@@ -203,9 +260,11 @@ def getSIG(Target, Reaction, output=cf.Get("output"), outputDir=cf.Get("outputDi
                             if verbosity:
                                 print(e)
                             continue
-                        
-                print("[nuclyr|exfor] "target+"("+reaction+") Done!!!")
+
+                print() 
+                print("[nuclyr|exfor] "+target+"("+reaction+") Done!!!")
                 driver.quit()
                 done = True
                 continue
+            
     return Data, Legends
