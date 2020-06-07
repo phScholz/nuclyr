@@ -1,4 +1,4 @@
-# nuclyr - a utility package for nuclear physics
+# nuclyr - an utility package for nuclear physics
 1. [Build](#build)
 2. [Config](#config)
 3. [Submodules](#submodules)
