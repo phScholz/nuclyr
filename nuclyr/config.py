@@ -1,7 +1,7 @@
 import os
 import json
 
-print("!!!nuclyr config file loaded!!!")
+print("[nuclyr|config] ~/.nuclyr loaded...")
 
 config = {
     "webdriver" :   "Edge",
@@ -25,5 +25,6 @@ def Set(option, string):
     Show()
 
 def Show():
+    print("[nuclyr|config] New content of ~/.nuclyr ...")
     print(json.load(open(os.path.join(os.path.expanduser('~'),".nuclyr"),"r")))
     
