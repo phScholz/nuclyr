@@ -2,7 +2,9 @@
 
 ## Build
 
-The package **nuclyr** is available via `pip`. Just run:
+The package **nuclyr** is available via `pip`. See [https://pypi.org/project/nuclyr/](https://pypi.org/project/nuclyr/).
+
+Just run:
 
 ```
 pip install nuclyr
