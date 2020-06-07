@@ -17,7 +17,7 @@ For the webscraping part of the package a driver for your favorite browser is ne
 
 Please make sure, you're downloading the right version for your browser.
 
-## Congig
+## Config
 
 At start nuclyr will create a configuration file in your home directory called `.nuclyr` which is in JSON format. You can easily edit all the package configurations with your prefered text editor, e.g. the location of the webdriver. 
 
