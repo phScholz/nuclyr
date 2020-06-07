@@ -1,4 +1,10 @@
 # nuclyr - a utility package for nuclear physics
+1. [Build](#build)
+2. [Config](#config)
+3. [Submodules](#submodules)
+    1. [exfor](#exfor)
+
+---
 
 ## Build
 
@@ -36,7 +42,9 @@ cf.Get("driver_loc")
 #print the whole configuration file
 cf.Show() 
 ```
-## nuclyr - exfor
+## Submodules
+
+### exfor
 
 This submodule is for mineing up-to-date reaction data from the [EXFOR](https://www-nds.iaea.org/exfor/exfor.htm) data base.
 
