@@ -4,14 +4,27 @@ import requests
 import math
 import io
 import os
+from nuclyr.constants import amu
+
+def qValue(Za,Aa,ZA,AA,Zb,Ab,ZB,AB):
+    return atomicMass(Za,Aa)+atomicMass(ZA,AA)-atomicMass(Zb,Ab)-atomicMass(ZB,AB)
+
+def atomicMass(Z,A):
+    dm, dmErr = massExcess(Z,A)
+
+    if dm != 0:
+        M= A*amu + dm
+        return M
+    else:
+        return 0
 
 def massExcess(Z,A, model="RIPL"):
     this_dir, this_filename = os.path.split(__file__)
 
-    df=pd.read_csv(os.path.join(this_dir,"data","ripl","mass-frdm95.dat"), skiprows=(0,1,2,3), sep=",", names=["Z","A","Element","Flag","Mexp","MErr","Mth","Emic","beta2","beta3","beta4","beta6"], header=0)
+    df=pd.read_csv(os.path.join(this_dir,"data","ripl","mass-frdm95.dat"), skiprows=(0,1,2), sep=",", names=["Z","A","Element","Flag","Mexp","MErr","Mth","Emic","beta2","beta3","beta4","beta6"], header=0)
 
     if model == "RIPL":
-        df=pd.read_csv(os.path.join(this_dir,"data","ripl","mass-frdm95.dat"), skiprows=(0,1,2,3), sep=",", names=["Z","A","Element","Flag","Mexp","MErr","Mth","Emic","beta2","beta3","beta4","beta6"], header=0)
+        df=pd.read_csv(os.path.join(this_dir,"data","ripl","mass-frdm95.dat"), skiprows=(0,1,2), sep=",", names=["Z","A","Element","Flag","Mexp","MErr","Mth","Emic","beta2","beta3","beta4","beta6"], header=0)
         df[["Mexp","MErr","Mth"]]=df[["Mexp","MErr","Mth"]].replace(r'^\s*$', np.nan, regex=True)
         df[["Mexp","MErr","Mth"]]=df[["Mexp","MErr","Mth"]].astype(float)
         a = df["Mexp"].loc[(df["Z"] == Z) & (df["A"]==A)]
