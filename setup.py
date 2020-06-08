@@ -24,19 +24,16 @@ for filename in os.listdir(data_file_source):
 data_files = [(data_install_folder, all_data_files)]
 
 setup(name='nuclyr',
-      version='0.15',
+      version='0.16',
       author='Philipp Scholz',
       author_email='pscholz@outlook.com',
       license='MIT',
-      packages=find_packages(),
+      packages=["nuclyr"],
       package_dir={package_name: package_name},
-      data_files=data_files,
+      #data_files=[("","ripl/abundance.dat"), ("","ripl/mass-frdm95.dat"),("","./admc/mass16.dat")],
+      include_package_data = True,
       url="https://github.com/phScholz/nuclyr",
       description="An utility package for nuclear data.",
       long_description=long_description,
       zip_safe=False,
-      install_requires=['selenium','pandas'],
-      classifiers=[
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7'
-          ])
+      install_requires=['selenium','pandas'])
