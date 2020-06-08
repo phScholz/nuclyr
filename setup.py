@@ -1,18 +1,42 @@
-from setuptools import setup
+from setuptools import setup, find_packages
+import os
+import ast
+from pip import __file__ as pip_loc
+
+def extract_values(source_file, desired_vars):
+    with open(source_file) as f:
+        for line in f:
+            if any(line.startswith(var) for var in desired_vars):
+                parsed = ast.parse(line).body[0]
+                yield parsed.targets[0].id, parsed.value.s
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
+  
+package_name="nuclyr"
+
+data_file_source = os.path.join(os.path.dirname(__file__), package_name)
+data_install_folder = os.path.join(os.path.dirname(os.path.dirname(pip_loc)), package_name)
+
+for filename in os.listdir(data_file_source):
+  all_data_files = os.path.join(data_file_source, filename)
+
+data_files = [(data_install_folder, all_data_files)]
 
 setup(name='nuclyr',
       version='0.15',
       author='Philipp Scholz',
       author_email='pscholz@outlook.com',
       license='MIT',
-      packages=['nuclyr'],
-      data_files=[],
+      packages=find_packages(),
+      package_dir={package_name: package_name},
+      data_files=data_files,
       url="https://github.com/phScholz/nuclyr",
       description="An utility package for nuclear data.",
-      long_description="An utility package for nuclear physics.\
-        Features include the automatic data mining from the EXFOR database",
+      long_description=long_description,
       zip_safe=False,
-      install_requires=['selenium','pandas'])
+      install_requires=['selenium','pandas'],
+      classifiers=[
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7'
+          ])
