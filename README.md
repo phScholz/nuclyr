@@ -1,10 +1,20 @@
 # nuclyr - an utility package for nuclear physics
-1. [Build](#build)
-2. [Config](#config)
-3. [Submodules](#submodules)
+1. [Motivation](#motivation)
+2. [Build](#build)
+3. [Config](#config)
+4. [Submodules](#submodules)
     1. [exfor](#exfor)
     2. [mass](#mass)
 ---
+## Motivation
+Often data analysis in nuclear physics depends on up-to-date values for specific parameters, e.g. cross sections, masses, half-lives. 
+`nuclyr` is a python package which should provide such functionality. It will grow over time depending on what I personally need for my analysis. 
+At the moment `nuclyr` includes the following features:
+
+* Obtain up-to-date **cross section data** from the [EXFOR](https://www-nds.iaea.org/exfor/exfor.htm) database as pandas dataframes via the [exfor](#exfor) submodule
+* Get up-to-date **atomic masses, massExcess**, and calculate **QValues** via the [mass](#mass) submodule
+* Rather useful constants in nuclear physics via `nuclyr.constants`
+
 ## Build
 
 The package **nuclyr** is available via `pip`. See [https://pypi.org/project/nuclyr/](https://pypi.org/project/nuclyr/).
