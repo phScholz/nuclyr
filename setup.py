@@ -35,5 +35,6 @@ setup(name='nuclyr',
       url="https://github.com/phScholz/nuclyr",
       description="An utility package for nuclear data.",
       long_description=long_description,
+      long_description_content_type='text/markdown',
       zip_safe=False,
       install_requires=['selenium','pandas'])

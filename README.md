@@ -4,9 +4,7 @@
 3. [Submodules](#submodules)
     1. [exfor](#exfor)
     2. [mass](#mass)
-
 ---
-
 ## Build
 
 The package **nuclyr** is available via `pip`. See [https://pypi.org/project/nuclyr/](https://pypi.org/project/nuclyr/).
