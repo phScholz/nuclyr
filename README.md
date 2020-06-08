@@ -3,6 +3,7 @@
 2. [Config](#config)
 3. [Submodules](#submodules)
     1. [exfor](#exfor)
+    2. [mass](#mass)
 
 ---
 
@@ -89,3 +90,33 @@ The result would look like:
 
 ![](./doc/img/63Cu_p_n.png).
 
+### mass
+
+You want to use recommended values for nuclear masses in your python code? You can get them via this submodule.
+Here is a small example of getting the mass excesses of thin isotopes.
+
+```python
+from nuclyr import mass
+import matplotlib.pyplot as plt
+import numpy as np
+
+masses = np.arange(99,138)
+excess = np.zeros(len(masses))
+errors = np.zeros(len(masses))
+
+for i in range(len(masses)):
+    number[i], errors[i] =mass.massExcess(50,masses[i])
+
+
+plt.figure(1, figsize=(8,5))
+plt.ylabel(r"mass excess [MeV]", size=25)
+plt.xlabel(r"mass number", size=25)
+plt.gca().tick_params(labelsize=15)
+plt.text(115, -60, r"Z=50", size=30)
+plt.errorbar(masses, number, yerr=errors, color="black", marker="o", linestyle="--")
+plt.tight_layout()
+plt.show()
+```
+
+The script above will produce the following plot:
+![](./doc/img/Sn_masses.png)
