@@ -24,7 +24,7 @@ for filename in os.listdir(data_file_source):
 data_files = [(data_install_folder, all_data_files)]
 
 setup(name='nuclyr',
-      version='0.16',
+      version='0.17',
       author='Philipp Scholz',
       author_email='pscholz@outlook.com',
       license='MIT',

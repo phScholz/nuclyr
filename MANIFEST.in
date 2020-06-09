@@ -1,2 +1,3 @@
 recursive-include nuclyr/data/ripl *.dat
 recursive-include nuclyr/data/amdc *.dat
+recursive-include doc/img *.png
