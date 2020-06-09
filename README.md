@@ -14,6 +14,7 @@ At the moment `nuclyr` includes the following features:
 
 * Obtain up-to-date **cross section data** from the [EXFOR](https://www-nds.iaea.org/exfor/exfor.htm) database as pandas dataframes via the [exfor](#exfor) submodule
 * Get up-to-date **atomic masses, massExcess**, and calculate **QValues** via the [mass](#mass) submodule
+* Get up-to-date **level scheme information** from [NNDC](https://www.nndc.bnl.gov/) via the [nndc](#nndc) submodule
 * Rather useful constants in nuclear physics via `nuclyr.constants`
 
 ## Build
