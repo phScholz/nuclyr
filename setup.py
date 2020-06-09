@@ -37,4 +37,4 @@ setup(name='nuclyr',
       long_description=long_description,
       long_description_content_type='text/markdown',
       zip_safe=False,
-      install_requires=['selenium','pandas', 'numpy'])
+      install_requires=['selenium','pandas', 'numpy', 'requests'])
