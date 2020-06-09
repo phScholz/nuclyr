@@ -3,7 +3,6 @@ import pandas as pd
 from os import path
 import os
 import time
-import json
 import sys
 import nuclyr.config as cf
 
