@@ -5,6 +5,7 @@
 4. [Submodules](#submodules)
     1. [exfor](#exfor)
     2. [mass](#mass)
+    3. [nndc](#nndc)
 ---
 ## Motivation
 Often data analysis in nuclear physics depends on up-to-date values for specific parameters, e.g. cross sections, masses, half-lives. 
@@ -128,3 +129,42 @@ plt.show()
 
 The script above will produce the following plot:
 ![](./doc/img/Sn_masses.png)
+
+### nndc
+Sometimes a nuclear physicist is interested in up-to-date level information of an isotope. It would be really handy to obtain these data in an automatic way.
+For this, the `nndc` submodule is implemented which helps you to read level information for a specific isotope from the [NNDC-database](https://www.nndc.bnl.gov/) which get their values from the [Nuclear Data Sheets](https://www.sciencedirect.com/journal/nuclear-data-sheets).
+
+The following example shows, how one can obtain the levelscheme as a pandas dataframe an plot the energies of the levels as a histogram for several germanium isotopes. 
+```python
+import nuclyr.nndc as nndc
+import pandas as pd
+import matplotlib.pyplot as plt
+
+scheme1 = nndc.levelscheme("70Ge")
+scheme2 = nndc.levelscheme("72Ge")
+scheme3 = nndc.levelscheme("74Ge")
+scheme4 = nndc.levelscheme("76Ge")
+
+df1 = scheme1.energies()
+df2 = scheme2.energies()
+df3 = scheme3.energies()
+df4 = scheme4.energies()
+
+
+plt.figure(1, figsize=(10,6))
+plt.xlabel(r"Energy [keV]", size=30)
+plt.ylabel(r"$\rho$(E) [1/100 kev]", size=30)
+plt.gca().tick_params(labelsize=20)
+
+df1[0].hist(bins=int(df1[0].max()/100), alpha=0.5, label=r"70Ge")
+df2[0].hist(bins=int(df2[0].max()/100), alpha=0.5, label=r"72Ge")
+df3[0].hist(bins=int(df3[0].max()/100), alpha=0.5, label=r"74Ge")
+df4[0].hist(bins=int(df4[0].max()/100), alpha=0.5, label=r"76Ge")
+
+plt.legend(prop={"size":30})
+plt.tight_layout()
+plt.show()
+```
+
+The resulting histogram is basically the experimentally observed level density and looks like the following figure:
+![](doc/img/Ge_leveldensity.png)
